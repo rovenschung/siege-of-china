@@ -143,7 +143,7 @@ async function initializeStore(){roomId=roomFromURL();const cfg=window.FIREBASE_
    const base='https://www.gstatic.com/firebasejs/13.3.0/';
    const [appLib,authLib,dbLib]=await Promise.all([import(base+'firebase-app.js'),import(base+'firebase-auth.js'),import(base+'firebase-database.js')]);
    const app=appLib.initializeApp(cfg);const auth=authLib.getAuth(app);
-   await authLib.authStateReady(auth);if(!auth.currentUser)await authLib.signInAnonymously(auth);
+   await auth.authStateReady();if(!auth.currentUser)await authLib.signInAnonymously(auth);
    const db=dbLib.getDatabase(app);cloud={db,dbLib};mode='cloud';$('demoNotice').classList.add('hide');setStatus('雲端已連線','live');
    const roomRef=dbLib.ref(db,'rooms/'+roomId);dbLib.onValue(roomRef,snap=>{acceptSnapshot(snap.val()||{})},error=>{setStatus('同步失敗','error');toast('雲端讀取失敗：'+error.message)});
    dbLib.onValue(dbLib.ref(db,'.info/connected'),snap=>setStatus(snap.val()?'雲端即時同步中':'網路中斷／重連中',snap.val()?'live':'error'));
