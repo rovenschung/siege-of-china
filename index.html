@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="theme-color" content="#f9f7f2"/>
+<meta name="description" content="6 人共用的中國攻城記錄地圖。各自選旗子顏色，旗子同時顯示；完成雲端設定後即時同步。"/>
+<title>攻城記錄｜六人共用地圖</title>
+<!--【只需設定一次】將 Firebase Console > 專案設定 > 網頁應用程式 的設定填到這裡。
+     注意：apiKey 等網頁 Firebase 設定是公開用的識別資訊，不是伺服器金鑰。
+     請務必依 README 啟用匿名驗證，並設定安全規則。 -->
+<script>
+window.FIREBASE_CONFIG = {
+  apiKey: "AIzaSyC-tvxOmo6_wLEtS96Lwt4OSTu46iSVHWQ",
+  authDomain: "siege-of-china-51222.firebaseapp.com",
+  databaseURL: "https://siege-of-china-51222-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "siege-of-china-51222",
+  storageBucket: "siege-of-china-51222.firebasestorage.app",
+  messagingSenderId: "612891972697",
+  appId: "1:612891972697:web:040cbd0c9e250fdd454d48",
+  measurementId: "G-YQSQM8ND4F"
+};
+</script>
+<style>
+:root{color-scheme:light;--bg:#f8f6f2;--paper:#fff;--ink:#263448;--muted:#77828c;--line:#eae7e1;--red:#d95650;--shadow:0 14px 38px #2c34400a}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font:15px/1.6 -apple-system,BlinkMacSystemFont,"Noto Sans TC","Microsoft JhengHei","PingFang TC",Arial,sans-serif;background:var(--bg);color:var(--ink)}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.48;cursor:not-allowed}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #e3a9a3;outline-offset:3px}.shell{max-width:1370px;padding:0 27px;margin:auto}header{background:#ffffffdf;border-bottom:1px solid var(--line)}.top{min-height:69px;display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{display:flex;align-items:center;gap:10px;font-weight:850;font-size:18px;letter-spacing:.05em}.brand-logo{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;color:white;background:var(--red);box-shadow:0 5px 16px #d9565040}.top-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.status{font-size:12px;color:#6d7984;display:flex;align-items:center;gap:7px;background:#f5f7f6;border:1px solid #e7eae8;padding:6px 10px;border-radius:20px;font-weight:700}.status i{display:block;width:8px;height:8px;border-radius:50%;background:#ec9d42}.status.live i{background:#43ae77}.status.error i{background:#dc5c53}.top-button{border:1px solid #dddcd7;background:#fff;padding:7px 12px;border-radius:9px;font-size:12px;font-weight:800;color:#586673}.main{padding-top:31px;padding-bottom:50px}.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:22px;margin-bottom:23px}.eyebrow{color:var(--red);letter-spacing:.18em;font-size:11px;font-weight:850}h1{font-size:clamp(27px,3.6vw,41px);line-height:1.27;margin:6px 0 8px;letter-spacing:.015em}.sub{color:var(--muted);font-size:13px;margin:0}.stat-box{display:flex;gap:21px;flex-shrink:0;align-items:center;background:#fff;padding:13px 19px;border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow)}.stat{min-width:80px}.stat strong{font-size:25px;line-height:1.15;font-variant-numeric:tabular-nums}.stat small{color:#9aa1a8;font-size:12px}.stat label{display:block;font-size:11px;color:var(--muted)}.notice{background:#fff8e9;border:1px solid #f2dfb6;padding:12px 16px;border-radius:12px;font-size:12px;color:#886e45;margin-bottom:18px}.notice strong{color:#6f552b}.notice a{color:#aa6033}.workspace{display:grid;grid-template-columns:minmax(0,1.85fr) minmax(340px,1fr);align-items:start;gap:18px}.card{background:#fff;border:1px solid var(--line);border-radius:19px;box-shadow:var(--shadow)}.map-head{padding:22px 25px 11px;display:flex;align-items:center;justify-content:space-between;gap:10px}h2{font-size:18px;margin:0}.hint{font-size:12px;color:var(--muted)}.map-panel{margin:0 11px 0;position:relative;overflow:hidden;border:1px solid #f0eee7;border-radius:12px;min-height:310px;background:radial-gradient(circle at 50% 38%,#fcfdfb,#f0f3f0)}#mapSvg{width:100%;height:auto;display:block;aspect-ratio:1100/705;touch-action:pan-y}.land{fill:#e5e9e7;stroke:#fff;stroke-width:1.35;stroke-linejoin:round;vector-effect:non-scaling-stroke;cursor:pointer}.land:hover,.land:focus{fill:#c8dbd2;outline:none;stroke:#91b0a3;stroke-width:1.8}.land.visited{fill:#eee1cc}.map-name{fill:#64777b;font-size:11px;stroke:#fff;stroke-width:3;paint-order:stroke;text-anchor:middle;pointer-events:none;font-weight:700}.flag-group{cursor:pointer;filter:drop-shadow(0 2px 2px #29344240)}.flag-label{fill:#2e3d4c;stroke:white;stroke-width:3;paint-order:stroke;text-anchor:middle;font-weight:850;font-size:10px;pointer-events:none}.controls{position:absolute;right:12px;top:12px;display:flex;flex-direction:column;gap:5px}.square-btn{width:35px;height:35px;border-radius:9px;border:1px solid #e8e6e2;background:#fffffff0;color:#50606e;font-size:18px;line-height:1}.square-btn:hover{background:#fff2ef}.map-message{position:absolute;inset:0;background:#ffffffec;display:grid;place-content:center;text-align:center;padding:25px;font-size:13px;color:#697680}.map-message strong{font-size:17px;color:var(--ink)}.hide{display:none!important}.watermark{position:absolute;left:13px;bottom:12px;font-size:10px;color:#a3adaa;letter-spacing:.12em;pointer-events:none}.map-bottom{padding:14px 22px 20px;border-top:1px solid #f7f4f0;font-size:12px}.map-legend{display:flex;flex-wrap:wrap;gap:9px 15px;align-items:center}.legend-item{display:flex;align-items:center;gap:5px;color:#52616d}.legend-flag{font-size:18px;line-height:1}.map-bottom p{margin:7px 0 0;color:#94a1aa}.sidebar{display:flex;flex-direction:column;gap:15px}.pad{padding:22px}.section-cap{font-size:12px;color:var(--muted);margin:4px 0 14px}.profile-header{display:flex;align-items:center;justify-content:space-between;gap:10px}.count{font-size:12px;color:#ac554f;background:#fcefed;padding:3px 9px;border-radius:20px;font-weight:800}.members{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:15px}.member{border:1px solid #e8e9e7;background:#fff;border-radius:12px;padding:9px 6px;min-height:70px;text-align:center;color:#586572;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;min-width:0}.member .flag-symbol{font-size:25px;line-height:1;filter:drop-shadow(0 1px 1px #0002)}.member .member-name{font-size:12px;font-weight:800;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.member.active{border:2px solid #d77c71;background:#fff9f7;padding:8px 5px}.member.add{border-style:dashed;color:#7a8691;background:#fafbfa}.who{font-size:12px;color:#7b8590;margin:14px 0 0}.who strong{color:#263748}.field-label{font-size:12px;color:#586777;font-weight:800;display:block;margin-bottom:7px}.entry-row{display:flex;gap:8px}input[type=text],select{min-width:0;width:100%;height:43px;padding:0 11px;border:1px solid #dfe3e3;background:white;border-radius:9px;color:#263448}input::placeholder{color:#9aa5af}.primary{height:43px;padding:0 14px;background:#d95850;border:0;color:white;font-size:13px;font-weight:850;border-radius:9px;white-space:nowrap}.primary:hover{background:#bc453e}.secondary{background:#fff;border:1px solid #e2e4e2;color:#5a6772;border-radius:9px;font-size:12px;font-weight:750;padding:9px 12px}.secondary:hover{border-color:#dda29a;color:#c25249}.examples{font-size:12px;color:#8b959e;margin-top:12px}.examples button{font-size:12px;padding:3px 8px;margin:3px 3px 0 0;background:#f4f7f4;color:#6b7975;border:0;border-radius:20px}.manual{margin-top:11px;background:#fff9f3;padding:12px;border:1px solid #f0e5d9;border-radius:10px}.manual p{font-size:12px;margin:0 0 9px;color:#85735c}.manual-row{display:flex;gap:6px}.records{max-height:340px;overflow:auto;margin-top:12px}.region-record{border-bottom:1px solid #f2f1ee;padding:12px 0}.region-record:first-child{padding-top:0}.region-record:last-child{border-bottom:0}.region-title{display:flex;justify-content:space-between;gap:10px;font-weight:850;font-size:13px;margin-bottom:7px}.region-title small{color:#9aa4ae;font-weight:500}.visits{display:flex;flex-wrap:wrap;gap:6px}.visit-chip{font-size:12px;border:1px solid #e9e8e5;padding:5px 7px 5px 8px;border-radius:8px;display:inline-flex;align-items:center;gap:7px;color:#5e6975;background:#faf9f7}.remove{background:#efebe7;color:#8e9aa1;border:0;border-radius:5px;width:20px;height:20px;line-height:1}.remove:hover{background:#fae1dc;color:#b74d42}.empty{text-align:center;border:1px dashed #dadfdc;border-radius:12px;font-size:12px;color:#88949d;padding:22px 12px}.tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.management,.foot-note{color:#93a0a9;font-size:11px;line-height:1.8}.management{margin:10px 0 0}.foot-note{margin:19px 0 0}.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,15px);opacity:0;background:#293e52;color:#fff;font-size:13px;padding:10px 15px;pointer-events:none;transition:.2s;z-index:20;border-radius:10px;box-shadow:0 10px 25px #26344830;max-width:calc(100vw - 20px);text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}dialog{border:1px solid #e9e3dc;border-radius:18px;padding:24px;width:min(505px,calc(100% - 25px));max-height:calc(100vh - 50px);overflow:auto;color:var(--ink);box-shadow:0 20px 70px #2634484a}dialog::backdrop{background:#1b2b3e9e}dialog h2{margin:0 0 7px}dialog p{font-size:13px;color:#7b8791;margin:4px 0 12px}.dialog-actions{display:flex;gap:9px;justify-content:flex-end;margin-top:15px}.palette{display:flex;gap:8px;flex-wrap:wrap;margin:9px 0 13px}.color-button{width:32px;height:32px;border:3px solid white;box-shadow:0 0 0 1px #d7d9da;border-radius:10px}.color-button.picked{box-shadow:0 0 0 3px #394e61}.color-button.taken{opacity:.25;cursor:not-allowed}.selected-note{color:#839097;font-size:12px;margin-top:8px}.dialog-field{margin-top:15px}.dialog-field label{display:block;font-size:12px;font-weight:800;color:#5c6c78;margin-bottom:6px}.dialog-members{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.dialog-member{border:1px solid #e5e7e7;border-radius:10px;padding:10px;background:#fafbf9;display:flex;align-items:center;gap:8px;font-size:13px}.dialog-member i{display:inline-block;width:11px;height:11px;border-radius:3px}.dialog-member span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.divider-text{color:#95a0a9;font-size:12px;display:flex;gap:10px;align-items:center;margin:16px 0}.divider-text::before,.divider-text::after{content:'';height:1px;flex:1;background:#e8ebe8}
+@media(max-width:1070px){.workspace{grid-template-columns:1fr}.sidebar{display:grid;grid-template-columns:1fr 1fr;align-items:start}.sidebar section:last-child{grid-column:span 2}.map-panel{min-height:0}}
+@media(max-width:670px){.shell{padding:0 13px}.top{min-height:62px}.brand{font-size:16px}.brand-logo{width:33px;height:33px}.top-right{gap:6px}.top-button{padding:5px 8px}.status{padding:4px 8px;font-size:11px}.main{padding-top:21px}.hero{display:block;margin-bottom:15px}.hero h1{font-size:28px}.stat-box{margin-top:13px;padding:10px 14px;justify-content:space-evenly}.stat strong{font-size:22px}.workspace{gap:13px}.sidebar{display:flex;gap:13px}.card{border-radius:15px}.map-head{padding:15px 16px 9px}.map-panel{margin:0 7px}.map-name{display:none}.map-bottom{padding:12px 14px}.pad{padding:18px}h2{font-size:16px}.square-btn{width:30px;height:30px}.controls{top:8px;right:8px}.watermark{font-size:8px;left:7px;bottom:6px}.members{grid-template-columns:repeat(3,1fr)}.color-button{width:33px;height:33px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header><div class="shell top"><div class="brand"><div class="brand-logo">⚑</div><span>攻城記錄 · 六人共用版</span></div><div class="top-right"><div id="syncStatus" class="status"><i></i><span>正在準備…</span></div><button id="inviteTop" class="top-button">邀請成員</button></div></div></header>
+<main class="shell main">
+ <div class="hero"><div><div class="eyebrow">CHINA CONQUEST MAP · 6 PEOPLE</div><h1>我們一起攻下的版圖。</h1><p class="sub">每人選一種旗色，六個人的旗子在同一張地圖同時呈現；同一人同一省級地區只顯示一面旗。</p></div><div class="stat-box"><div class="stat"><strong id="allCount">0</strong><small> / 33</small><label>團隊插旗地區</label></div><div class="stat"><strong id="mineCount">0</strong><small> / 33</small><label>我的插旗地區</label></div><div class="stat"><strong id="memberCount">0</strong><small> / 6</small><label>加入人數</label></div></div></div>
+ <div class="notice" id="demoNotice"><strong>目前為本機示範模式：</strong>沒有設定 Firebase 雲端資料庫，可在這台裝置切換最多 6 位成員，其他手機／電腦還看不到這些旗子。依下載檔內的 README 設定後即可開啟即時同步。</div>
+ <div class="workspace">
+ <section class="card" aria-labelledby="mapTitle"><div class="map-head"><div><h2 id="mapTitle">六人攻城地圖</h2><div class="hint">不同人的旗子會並列；點選省份可加入你自己的攻城記錄</div></div><span aria-hidden="true" style="font-size:24px">🗺️</span></div><div class="map-panel"><svg id="mapSvg" viewBox="0 0 1100 705" aria-label="中國各省級地區六人彩色攻城旗地圖"><g id="mapLayers"></g></svg><div id="mapMessage" class="map-message"><strong>正在載入地圖…</strong><span>地圖需要網路連線，文字紀錄功能可先使用</span></div><div class="controls"><button id="zoomIn" class="square-btn" title="放大地圖">+</button><button id="zoomOut" class="square-btn" title="縮小地圖">−</button><button id="zoomReset" class="square-btn" title="重設縮放">⌂</button></div><div class="watermark">CHINA CONQUEST · SHARED FLAGS</div></div><div class="map-bottom"><div class="map-legend" id="legend"><span class="hint">尚無成員</span></div><p>同一省份不同人各插一面彩旗；香港、澳門分開計算。</p></div></section>
+ <aside class="sidebar">
+  <section class="card pad"><div class="profile-header"><h2>成員</h2><span class="count" id="peopleBadge">0 / 6 人</span></div><p class="section-cap">點選暱稱切換自己的身分，所有人的旗子仍會同時顯示</p><div id="members" class="members"></div><div class="who" id="whoLine">請先設定自己的暱稱與旗子顏色</div><div class="tools"><button id="profileEditBtn" class="secondary">編輯我的暱稱／旗色</button></div></section>
+  <section class="card pad"><h2>新增攻城記錄</h2><p class="section-cap">輸入城市、景點、省份，或直接點選地圖</p><label class="field-label" for="placeInput">攻城地點</label><div class="entry-row"><input type="text" id="placeInput" list="placeSuggestions" maxlength="80" autocomplete="off" placeholder="例如：深圳、成都、澳門"/><button id="addButton" class="primary">＋ 加入</button></div><datalist id="placeSuggestions"></datalist><div id="manual" class="manual hide"><p id="manualExplain">找不到地點，請選擇所屬省份</p><div class="manual-row"><select id="regionSelect" aria-label="選擇省份"></select><button id="manualAdd" class="primary">確認加入</button></div></div><div class="examples">試試看：<button data-example="北京">北京</button><button data-example="深圳">深圳</button><button data-example="西安">西安</button><button data-example="九寨溝">九寨溝</button></div></section>
+  <section class="card pad"><div class="profile-header"><h2>所有人的攻城記錄</h2><span class="count" id="recordsBadge">0 筆</span></div><p class="section-cap">每筆地點標示所屬人員；只能在畫面上刪除自己新增的紀錄</p><div class="records" id="records" aria-live="polite"></div><div class="tools"><button id="shareBtn" class="secondary">🔗 複製共用網址</button><button id="exportBtn" class="secondary">↓ 備份全部</button><button id="importBtn" class="secondary">↑ 匯入舊紀錄</button><button id="clearBtn" class="secondary">清空我的攻城記錄</button></div><p class="management">雲端模式下，新增／刪除與旗色更改會同步給所有正在使用的成員；本機模式只保存於此瀏覽器。</p><input id="fileInput" type="file" accept=".json,application/json" class="hide"/></section>
+ </aside></div><p class="foot-note">使用說明：例如 A 記錄廣州與深圳，B 記錄珠海，廣東省會顯示 A、B 兩面不同顏色的旗。第一次使用時請加入自己的暱稱。若沒有出現即時雲端狀態，請依說明完成 Firebase 設定。地圖使用網路地理資料來源。</p>
+</main>
+<dialog id="profileDialog"><h2 id="profileDialogTitle">選擇你的成員身分</h2><p id="profileHelp">如果你已經加入，直接點選暱稱；第一次使用請新增暱稱與旗子顏色。</p><div id="dialogMembers" class="dialog-members"></div><div class="divider-text" id="profileDivider">新增一位成員</div><div id="profileForm"><div class="dialog-field"><label for="nicknameInput">暱稱（最多 16 字）</label><input type="text" id="nicknameInput" maxlength="16" autocomplete="off" placeholder="例如：小明、爸爸、媽媽"/></div><div class="dialog-field"><label>選擇專屬旗子顏色（每人不同色）</label><div class="palette" id="palette"></div><p class="selected-note" id="paletteNote">請選擇一個顏色</p></div><div class="dialog-actions"><button id="cancelProfile" class="secondary">取消</button><button id="saveProfile" class="primary">儲存身分</button></div></div><div class="dialog-actions" id="profileCloseRow"><button id="profileClose" class="secondary">關閉</button></div></dialog>
+<dialog id="inviteDialog"><h2>邀請其他成員</h2><p>將以下共用網址傳給朋友；大家開啟後選擇自己的暱稱，就能一起編輯攻城記錄。只要連到同一個雲端資料庫，旗子就會即時更新。</p><input type="text" id="inviteInput" readonly aria-label="共用網址"/><p class="selected-note">提醒：此版本是信任成員共用的模式，任何取得邀請網址的人都能看到紀錄並選擇任一暱稱，尚未加入密碼保護。</p><div class="dialog-actions"><button class="secondary" id="inviteClose">關閉</button><button class="primary" id="inviteCopy">複製網址</button></div></dialog>
+<div class="toast" id="toast" role="status"></div>
+<script>
+'use strict';
+/* 省級地區與城市關鍵字：保留第一版原有的地點辨識能力。 */
+  const REGIONS = [
+    ['110000','北京','北京市','北京市','北京|故宮|故宫|天安門|天安门|八達嶺|八达岭|頤和園|颐和园|南鑼鼓巷|南锣鼓巷|圓明園|圆明园'],
+    ['120000','天津','天津市','天津市','天津|天津之眼|五大道|古文化街'],
+    ['130000','河北','河北省','河北省','石家莊|石家庄|承德|秦皇島|秦皇岛|北戴河|唐山|邯鄲|邯郸|保定|張家口|张家口|廊坊|白洋淀|山海關|山海关'],
+    ['140000','山西','山西省','山西省','太原|大同|平遙|平遥|五台山|忻州|晉中|晋中|雲岡石窟|云冈石窟'],
+    ['150000','內蒙古','內蒙古自治區','内蒙古自治区','呼和浩特|包頭|包头|鄂爾多斯|鄂尔多斯|呼倫貝爾|呼伦贝尔|滿洲里|满洲里|阿爾山|阿尔山|赤峰|錫林郭勒|锡林郭勒'],
+    ['210000','遼寧','遼寧省','辽宁省','瀋陽|沈阳|大連|大连|丹東|丹东|鞍山|旅順|旅顺|葫蘆島|葫芦岛|本溪'],
+    ['220000','吉林','吉林省','吉林省','長春|长春|吉林市|延吉|延邊|延边|長白山|长白山|通化|松原'],
+    ['230000','黑龍江','黑龍江省','黑龙江省','哈爾濱|哈尔滨|牡丹江|齊齊哈爾|齐齐哈尔|漠河|雪鄉|雪乡|佳木斯|大慶|大庆|亞布力|亚布力'],
+    ['310000','上海','上海市','上海市','上海|外灘|外滩|東方明珠|东方明珠|豫園|豫园|上海迪士尼'],
+    ['320000','江蘇','江蘇省','江苏省','南京|蘇州|苏州|無錫|无锡|揚州|扬州|常州|南通|徐州|鎮江|镇江|連雲港|连云港|周莊|周庄|同里'],
+    ['330000','浙江','浙江省','浙江省','杭州|寧波|宁波|溫州|温州|紹興|绍兴|嘉興|嘉兴|湖州|金華|金华|義烏|义乌|烏鎮|乌镇|西塘|千島湖|千岛湖|舟山|普陀山'],
+    ['340000','安徽','安徽省','安徽省','合肥|黃山|黄山|宏村|徽州|蕪湖|芜湖|安慶|安庆|九華山|九华山|宣城'],
+    ['350000','福建','福建省','福建省','福州|廈門|厦门|泉州|漳州|莆田|武夷山|平潭|鼓浪嶼|鼓浪屿|土樓|土楼|龍岩|龙岩'],
+    ['360000','江西','江西省','江西省','南昌|景德鎮|景德镇|九江|贛州|赣州|婺源|廬山|庐山|井岡山|井冈山'],
+    ['370000','山東','山東省','山东省','濟南|济南|青島|青岛|煙台|烟台|威海|日照|泰安|泰山|曲阜|淄博|蓬萊|蓬莱|濰坊|潍坊'],
+    ['410000','河南','河南省','河南省','鄭州|郑州|洛陽|洛阳|開封|开封|安陽|安阳|焦作|少林寺|龍門石窟|龙门石窟|雲台山|云台山|南陽|南阳'],
+    ['420000','湖北','湖北省','湖北省','武漢|武汉|宜昌|襄陽|襄阳|十堰|恩施|神農架|神农架|黃鶴樓|黄鹤楼|武當山|武当山|荊州|荆州'],
+    ['430000','湖南','湖南省','湖南省','長沙|长沙|張家界|张家界|岳陽|岳阳|衡陽|衡阳|常德|湘潭|鳳凰古城|凤凰古城|芙蓉鎮|芙蓉镇|武陵源'],
+    ['440000','廣東','廣東省','广东省','廣州|广州|深圳|珠海|佛山|中山|東莞|东莞|惠州|汕頭|汕头|潮州|揭陽|揭阳|江門|江门|肇慶|肇庆|梅州|順德|顺德|長隆|长隆|丹霞山'],
+    ['450000','廣西','廣西壯族自治區','广西壮族自治区','南寧|南宁|桂林|陽朔|阳朔|北海|柳州|崇左|德天瀑布|龍脊梯田|龙脊梯田|防城港|百色'],
+    ['460000','海南','海南省','海南省','海口|三亞|三亚|文昌|瓊海|琼海|儋州|萬寧|万宁|亞龍灣|亚龙湾|蜈支洲島|蜈支洲岛|博鰲|博鳌'],
+    ['500000','重慶','重慶市','重庆市','重慶|重庆|洪崖洞|解放碑|武隆|磁器口|大足石刻|朝天門|朝天门'],
+    ['510000','四川','四川省','四川省','成都|九寨溝|九寨沟|樂山|乐山|峨眉山|都江堰|雅安|稻城亞丁|稻城亚丁|色達|色达|西昌|綿陽|绵阳|黃龍|黄龙'],
+    ['520000','貴州','貴州省','贵州省','貴陽|贵阳|遵義|遵义|安順|安顺|黔東南|黔东南|西江千戶苗寨|西江千户苗寨|荔波|梵淨山|梵净山|黃果樹|黄果树'],
+    ['530000','雲南','雲南省','云南省','昆明|大理|麗江|丽江|香格里拉|西雙版納|西双版纳|玉龍雪山|玉龙雪山|騰沖|腾冲|普洱|瀘沽湖|泸沽湖|石林|虎跳峽|虎跳峡'],
+    ['540000','西藏','西藏自治區','西藏自治区','拉薩|拉萨|林芝|日喀則|日喀则|阿里|布達拉宮|布达拉宫|納木錯|纳木错|珠峰|雅魯藏布|雅鲁藏布'],
+    ['610000','陝西','陝西省','陕西省','西安|咸陽|咸阳|寶雞|宝鸡|延安|榆林|華山|华山|兵馬俑|兵马俑|大雁塔'],
+    ['620000','甘肅','甘肅省','甘肃省','蘭州|兰州|敦煌|嘉峪關|嘉峪关|張掖|张掖|天水|酒泉|莫高窟|月牙泉|鳴沙山|鸣沙山'],
+    ['630000','青海','青海省','青海省','西寧|西宁|青海湖|茶卡鹽湖|茶卡盐湖|格爾木|格尔木|玉樹|玉树|祁連|祁连'],
+    ['640000','寧夏','寧夏回族自治區','宁夏回族自治区','銀川|银川|中衛|中卫|石嘴山|沙坡頭|沙坡头|西夏王陵'],
+    ['650000','新疆','新疆維吾爾自治區','新疆维吾尔自治区','烏魯木齊|乌鲁木齐|喀什|伊寧|伊宁|吐魯番|吐鲁番|阿勒泰|喀納斯|喀纳斯|賽里木湖|赛里木湖|天山天池|庫車|库车|和田|哈密|伊犁'],
+    ['810000','香港','香港特別行政區','香港特别行政区','香港|港島|港岛|九龍|九龙|尖沙咀|中環|中环|維多利亞港|维多利亚港|旺角|大嶼山|大屿山|太平山頂|太平山顶|迪士尼香港'],
+    ['820000','澳門','澳門特別行政區','澳门特别行政区','澳門|澳门|氹仔|凼仔|路氹|路凼|威尼斯人|巴黎人|大三巴|官也街|澳門塔|澳门塔|黑沙海灘|黑沙海滩|路環|路环|倫敦人|伦敦人']
+  ].map(([id,short,name,simplified,words])=>({id,short,name,simplified,words:words.split('|')}));
+const byId=new Map(REGIONS.map(r=>[r.id,r]));
+const normalize=s=>String(s||'').trim().toLowerCase().replace(/[\s，,。.!！?？·•\-_/、（）()]+/g,'');
+const aliasMap=new Map();
+for(const r of REGIONS){const aliases=[r.short,r.name,r.simplified,...r.words];
+ if(r.id==='150000')aliases.push('内蒙古','内蒙古自治区');
+ if(r.id==='450000')aliases.push('广西','广西自治区');
+ if(r.id==='640000')aliases.push('宁夏');
+ for(const alias of aliases)if(normalize(alias))aliasMap.set(normalize(alias),r.id);
+}
+const COLOR_OPTIONS=[['#d94b48','珊瑚紅'],['#347bce','天空藍'],['#2aab78','翡翠綠'],['#9a63cb','紫羅蘭'],['#f1a62c','金黃色'],['#db6ca6','玫瑰粉'],['#21a8bc','湖水青'],['#73564e','咖啡棕'],['#a6a43b','橄欖綠']];
+const STORAGE='travel-footprints-team-v2';
+const $=id=>document.getElementById(id);
+const makeId=(prefix='id')=>prefix+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10);
+const cleanPlace=s=>String(s||'').trim().replace(/\s+/g,' ').slice(0,80);
+const safeName=s=>String(s||'').trim().replace(/\s+/g,' ').slice(0,16);
+const unique=(arr)=>[...new Set(arr)];
+let members=[],visits=[],currentId='',roomId='',cloud=null,mode='init',mapGeo=null,zoom=1,selectedColor=COLOR_OPTIONS[0][0],editing=false,showPrompted=false,timer=0;
+const toast=msg=>{const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(timer);timer=setTimeout(()=>t.classList.remove('show'),3100)};
+function resolvePlace(place){const n=normalize(place);if(!n)return null;if(aliasMap.has(n))return aliasMap.get(n);
+ const provinces=REGIONS.flatMap(r=>[r.name,r.simplified,r.short].map(alias=>({id:r.id,alias:normalize(alias)}))).filter(o=>o.alias.length>=2).sort((a,b)=>b.alias.length-a.alias.length);
+ for(const p of provinces)if(n.includes(p.alias))return p.id;
+ const partial=[...aliasMap.entries()].filter(([a])=>a.length>=2&&n.includes(a)).sort((a,b)=>b[0].length-a[0].length);
+ if(!partial.length)return null;const winners=partial.filter(p=>p[0].length===partial[0][0].length);return new Set(winners.map(p=>p[1])).size===1?partial[0][1]:null;
+}
+function setStatus(message,type=''){const el=$('syncStatus');el.className='status '+type;el.querySelector('span').textContent=message}
+function roomFromURL(){
+ const params=new URLSearchParams(location.search);
+ let id=params.get('room');
+ const valid=id=>/^r[a-zA-Z0-9_-]{8,30}$/.test(id||'');
+ if(!valid(id)){
+  try{const saved=localStorage.getItem('conquest-records-room-id');if(valid(saved))id=saved}catch(e){}
+  if(!valid(id)){
+   const arr=new Uint8Array(12);
+   if(typeof crypto!=='undefined'&&crypto.getRandomValues)crypto.getRandomValues(arr);
+   else for(let i=0;i<arr.length;i++)arr[i]=Math.random()*256|0;
+   id='r'+[...arr].map(n=>n.toString(16).padStart(2,'0')).join('');
+  }
+  params.set('room',id);
+  if(/^https?:$/.test(location.protocol))history.replaceState(null,'',location.pathname+'?'+params.toString()+location.hash);
+  try{localStorage.setItem('conquest-records-room-id',id)}catch(e){}
+ }
+ return id;
+}
+const memberById=id=>members.find(m=>m.id===id);
+function myVisits(){return visits.filter(v=>v.ownerId===currentId)}
+function currentMember(){return memberById(currentId)}
+function acceptSnapshot(data){members=Object.entries(data?.profiles||{}).map(([id,p])=>({id,name:safeName(p?.name||'未命名'),color:COLOR_OPTIONS.some(x=>x[0]===p?.color)?p.color:COLOR_OPTIONS[0][0],createdAt:Number(p?.createdAt)||0})).sort((a,b)=>a.createdAt-b.createdAt);
+ visits=Object.entries(data?.visits||{}).map(([id,v])=>({id,ownerId:String(v?.ownerId||''),place:cleanPlace(v?.place||''),region:String(v?.region||''),addedAt:Number(v?.addedAt)||0})).filter(v=>memberById(v.ownerId)&&byId.has(v.region)&&v.place).sort((a,b)=>b.addedAt-a.addedAt);
+ const saved=localStorage.getItem('travel-footprints-current-v2-'+roomId);if(!currentMember())currentId=memberById(saved)?.id||'';
+ renderAll();if(!currentId&&!showPrompted){showPrompted=true;openProfiles(false)}
+}
+function saveLocal(data){localStorage.setItem(STORAGE+'-'+roomId,JSON.stringify(data));acceptSnapshot(data)}
+function loadLocal(){try{return JSON.parse(localStorage.getItem(STORAGE+'-'+roomId)||'{}')}catch(e){return {}}}
+async function initializeStore(){roomId=roomFromURL();const cfg=window.FIREBASE_CONFIG||{};
+ if(!cfg.apiKey||!cfg.projectId||!cfg.databaseURL){mode='local';setStatus('本機示範 · 無同步');acceptSnapshot(loadLocal());window.addEventListener('storage',e=>{if(e.key===STORAGE+'-'+roomId)acceptSnapshot(loadLocal())});return}
+ setStatus('正在連線雲端…');
+ try{
+   const base='https://www.gstatic.com/firebasejs/13.3.0/';
+   const [appLib,authLib,dbLib]=await Promise.all([import(base+'firebase-app.js'),import(base+'firebase-auth.js'),import(base+'firebase-database.js')]);
+   const app=appLib.initializeApp(cfg);const auth=authLib.getAuth(app);
+   await authLib.authStateReady(auth);if(!auth.currentUser)await authLib.signInAnonymously(auth);
+   const db=dbLib.getDatabase(app);cloud={db,dbLib};mode='cloud';$('demoNotice').classList.add('hide');setStatus('雲端已連線','live');
+   const roomRef=dbLib.ref(db,'rooms/'+roomId);dbLib.onValue(roomRef,snap=>{acceptSnapshot(snap.val()||{})},error=>{setStatus('同步失敗','error');toast('雲端讀取失敗：'+error.message)});
+   dbLib.onValue(dbLib.ref(db,'.info/connected'),snap=>setStatus(snap.val()?'雲端即時同步中':'網路中斷／重連中',snap.val()?'live':'error'));
+ }catch(e){mode='error';setStatus('雲端設定錯誤','error');$('demoNotice').classList.remove('hide');$('demoNotice').innerHTML='<strong>雲端無法連線：</strong>請檢查 Firebase 設定、匿名登入及資料庫規則。錯誤：'+escapeHtml(e.message);toast('Firebase 連線失敗，請查看設定')}
+}
+function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+async function modifyProfiles(operation){if(mode==='local'){const data=loadLocal(),draft={...(data.profiles||{})};const value=operation(draft);if(!value)return false;saveLocal({...data,profiles:value});return true}
+ if(mode!=='cloud')throw Error('雲端尚未連接');const {db,dbLib}=cloud;const result=await dbLib.runTransaction(dbLib.ref(db,'rooms/'+roomId+'/profiles'),current=>operation(current||{}),{applyLocally:false});return result.committed;
+}
+async function saveMember(){const name=safeName($('nicknameInput').value),color=selectedColor;
+ if(!name){toast('請先輸入暱稱');return}if(!color){toast('請先選旗子顏色');return}
+ const prior=editing?currentMember():null,newId=prior?.id||makeId('p');
+ $('saveProfile').disabled=true;
+ try{const ok=await modifyProfiles(profiles=>{const list=Object.entries(profiles);if(!prior&&list.length>=6)return;
+ if(list.some(([id,p])=>id!==newId&&(normalize(p.name)===normalize(name)||p.color===color)))return;
+ profiles[newId]={name,color,createdAt:prior?.createdAt||Date.now()};return profiles});
+ if(!ok){toast('已額滿或暱稱／旗色被其他成員使用，請換一個');return}
+ currentId=newId;localStorage.setItem('travel-footprints-current-v2-'+roomId,newId);$('profileDialog').close();toast((prior?'已更新':'已加入')+' '+name+' 的旗子');renderAll();
+ }catch(e){toast('儲存失敗：'+e.message)}finally{$('saveProfile').disabled=false}}
+function chooseMember(id){const who=memberById(id);if(!who)return;currentId=id;localStorage.setItem('travel-footprints-current-v2-'+roomId,id);$('profileDialog').close();renderAll();toast('已切換為 '+who.name)}
+function openProfiles(isEdit=false){editing=isEdit&&!!currentMember();$('profileDialogTitle').textContent=editing?'編輯我的暱稱與旗色':'選擇你的成員身分';$('profileHelp').textContent=editing?'更新後，所有人的地圖都會同步顯示新的暱稱或旗色。':'已經加入就選擇現有暱稱；第一次使用請建立暱稱與專屬旗色。';
+ $('dialogMembers').classList.toggle('hide',editing);$('profileDivider').classList.toggle('hide',editing);$('nicknameInput').value=editing?currentMember().name:'';
+ selectedColor=editing?currentMember().color:COLOR_OPTIONS.find(([c])=>!members.some(m=>m.color===c))?.[0]||'';
+ $('profileForm').classList.toggle('hide',!editing&&members.length>=6);$('profileDivider').classList.toggle('hide',editing||members.length>=6);
+ renderProfileDialog();if(!$('profileDialog').open)$('profileDialog').showModal();
+}
+function renderProfileDialog(){const wrap=$('dialogMembers');wrap.replaceChildren();for(const m of members){const btn=document.createElement('button');btn.className='dialog-member';btn.type='button';const dot=document.createElement('i');dot.style.background=m.color;const txt=document.createElement('span');txt.textContent=m.name;const small=document.createElement('small');small.textContent='切換';btn.append(dot,txt,small);btn.onclick=()=>chooseMember(m.id);wrap.append(btn)}
+ if(!members.length){const p=document.createElement('p');p.textContent='目前還沒有人加入，你可以建立第一位成員。';wrap.append(p)}
+ const palette=$('palette');palette.replaceChildren();for(const [color,label] of COLOR_OPTIONS){const btn=document.createElement('button');btn.type='button';btn.className='color-button'+(selectedColor===color?' picked':'');btn.style.background=color;btn.title=label;btn.setAttribute('aria-label',label);btn.setAttribute('aria-pressed',selectedColor===color?'true':'false');const unavailable=members.some(m=>m.color===color&&(!editing||m.id!==currentId));if(unavailable){btn.disabled=true;btn.classList.add('taken')}else btn.onclick=()=>{selectedColor=color;renderProfileDialog()};palette.append(btn)}
+ $('paletteNote').textContent=selectedColor?'已選擇：'+(COLOR_OPTIONS.find(o=>o[0]===selectedColor)?.[1]||'旗色'):'請先選旗色';$('profileCloseRow').classList.toggle('hide',!currentMember());$('cancelProfile').textContent=currentMember()?'取消':'稍後設定';
+}
+function renderAll(){renderStats();renderMembers();renderRecords();if(mapGeo)renderMap()}
+function renderStats(){const team=new Set(visits.map(v=>v.region));const mine=new Set(myVisits().map(v=>v.region));$('allCount').textContent=team.size;$('mineCount').textContent=mine.size;$('memberCount').textContent=members.length;$('peopleBadge').textContent=members.length+' / 6 人';$('recordsBadge').textContent=visits.length+' 筆';$('profileEditBtn').disabled=!currentMember();$('addButton').disabled=!currentMember()||mode==='error';$('manualAdd').disabled=!currentMember()||mode==='error';$('clearBtn').disabled=!myVisits().length}
+function makeFlag(color){const span=document.createElement('span');span.className='flag-symbol';span.textContent='⚑';span.style.color=color;return span}
+function renderMembers(){const box=$('members');box.replaceChildren();for(const m of members){const btn=document.createElement('button');btn.type='button';btn.className='member'+(m.id===currentId?' active':'');btn.title='切換為 '+m.name;btn.append(makeFlag(m.color));const name=document.createElement('span');name.className='member-name';name.textContent=m.name;btn.append(name);btn.onclick=()=>chooseMember(m.id);box.append(btn)}
+ if(members.length<6){const btn=document.createElement('button');btn.className='member add';btn.innerHTML='<span class="flag-symbol">＋</span><span class="member-name">新增成員</span>';btn.onclick=()=>openProfiles(false);box.append(btn)}
+ const who=currentMember();$('whoLine').replaceChildren();$('whoLine').append(document.createTextNode('目前操作身分：'));const strong=document.createElement('strong');strong.textContent=who?who.name:'尚未選擇';$('whoLine').append(strong);
+ const legend=$('legend');legend.replaceChildren();for(const m of members){const span=document.createElement('span');span.className='legend-item';span.append(makeFlag(m.color));const name=document.createElement('span');name.textContent=m.name;span.append(name);legend.append(span)}if(!members.length)legend.textContent='尚無任何成員的旗子';
+}
+function renderRecords(){const wrap=$('records');wrap.replaceChildren();if(!visits.length){const e=document.createElement('div');e.className='empty';e.textContent='還沒有任何攻城記錄。請先加入成員，新增第一個地點！';wrap.append(e);return}
+ const groups=new Map();for(const v of visits){if(!groups.has(v.region))groups.set(v.region,[]);groups.get(v.region).push(v)}
+ for(const [region,items] of groups){const box=document.createElement('div');box.className='region-record';const head=document.createElement('div');head.className='region-title';const title=document.createElement('span');title.textContent=byId.get(region).name;const count=document.createElement('small');count.textContent=unique(items.map(v=>v.ownerId)).length+' 人 · '+items.length+' 地點';head.append(title,count);box.append(head);const line=document.createElement('div');line.className='visits';for(const v of items){const m=memberById(v.ownerId);const chip=document.createElement('span');chip.className='visit-chip';const dot=document.createElement('span');dot.style.cssText='width:8px;height:12px;display:inline-block;border-radius:2px;background:'+m.color;const name=document.createElement('span');name.textContent=m.name+' · '+v.place;chip.append(dot,name);if(v.ownerId===currentId){const remove=document.createElement('button');remove.className='remove';remove.textContent='×';remove.title='刪除 '+v.place;remove.onclick=()=>removeVisit(v);chip.append(remove)}line.append(chip)}box.append(line);wrap.append(box)}
+}
+async function addVisit(place,region){place=cleanPlace(place);if(!currentMember())return toast('請先選擇自己的暱稱');if(!place)return toast('請先輸入地點');if(!byId.has(region))return;
+ if(myVisits().some(v=>v.region===region&&normalize(v.place)===normalize(place)))return toast('你已記錄過這個攻城地點');
+ const id=makeId('v'),item={ownerId:currentId,place,region,addedAt:Date.now()};try{
+ if(mode==='local'){const data=loadLocal();saveLocal({...data,visits:{...(data.visits||{}),[id]:item}})}else if(mode==='cloud'){const {db,dbLib}=cloud;await dbLib.set(dbLib.ref(db,'rooms/'+roomId+'/visits/'+id),item)}else throw Error('無法連線');
+ $('placeInput').value='';$('manual').classList.add('hide');toast('已新增 '+place+'，'+currentMember()?.name+' 的旗子已更新');
+ }catch(e){toast('新增失敗：'+e.message)}
+}
+async function removeVisit(v){if(v.ownerId!==currentId)return;try{if(mode==='local'){const data=loadLocal();delete data.visits[v.id];saveLocal(data)}else if(mode==='cloud'){const {db,dbLib}=cloud;await dbLib.remove(dbLib.ref(db,'rooms/'+roomId+'/visits/'+v.id))}else throw Error('無法連線');toast('已刪除 '+v.place)}catch(e){toast('刪除失敗：'+e.message)}}
+async function clearMine(){const list=myVisits();if(!list.length)return;const name=currentMember()?.name||'';if(!confirm('確定要清空「'+name+'」的 '+list.length+' 筆攻城記錄？其他成員的紀錄會保留。'))return;
+ try{if(mode==='local'){const data=loadLocal();for(const v of list)delete data.visits[v.id];saveLocal(data)}else if(mode==='cloud'){const {db,dbLib}=cloud;const patch={};for(const v of list)patch['visits/'+v.id]=null;await dbLib.update(dbLib.ref(db,'rooms/'+roomId),patch)}toast('已清空你的攻城記錄')}catch(e){toast('操作失敗：'+e.message)}}
+function submit(){const place=cleanPlace($('placeInput').value);if(!place)return toast('請先輸入攻城地點');if(!currentMember())return openProfiles(false);const region=resolvePlace(place);if(region)return addVisit(place,region);$('manual').classList.remove('hide');$('manualExplain').textContent='「'+place+'」無法自動判斷，請選擇所在的省份：';$('regionSelect').focus()}
+/* 用原版省級 GeoJSON SVG 地圖；將同一地區不同人標成並排的彩色旗。 */
+const SVG='http://www.w3.org/2000/svg';const svg=(tag,attrs={})=>{const el=document.createElementNS(SVG,tag);for(const [k,v] of Object.entries(attrs))el.setAttribute(k,String(v));return el};const xy=coord=>[75+(coord[0]-73)*15.2,72+(54.5-coord[1])*15.2];
+const polygonPath=poly=>poly.map(ring=>ring.map((co,i)=>{const [x,y]=xy(co);return(i?'L':'M')+x.toFixed(2)+' '+y.toFixed(2)}).join(' ')+'Z').join(' ');
+function geometryPath(geom){if(!geom)return '';return geom.type==='Polygon'?polygonPath(geom.coordinates):geom.type==='MultiPolygon'?geom.coordinates.map(polygonPath).join(' '):''}
+function centerFor(f){const id=String(f.properties.adcode);return {'810000':[114.175,22.31],'820000':[113.543,22.19]}[id]||f.properties.centroid||f.properties.center||[104,35]}
+function buildFlag(feature,person,index,total){const id=String(feature.properties.adcode),[x,y]=xy(centerFor(feature));const delta=id==='810000'?[39,-32]:id==='820000'?[-38,24]:[0,0];const mobile=window.matchMedia('(max-width:670px)').matches;const scale=mobile?1.8:1.25;const step=mobile?24:22;const spread=(index-(total-1)/2)*step;
+ const g=svg('g',{class:'flag-group',transform:`translate(${x+delta[0]+spread} ${y+delta[1]}) scale(${scale})`});
+ if((delta[0]||delta[1])&&index===0)g.append(svg('line',{x1:-delta[0]/scale,y1:-delta[1]/scale,x2:0,y2:0,stroke:'#b6b0a5','stroke-width':'.8','stroke-dasharray':'3 2'}));
+ g.append(svg('circle',{cx:0,cy:0,r:3.2,fill:person.color,stroke:'#fff','stroke-width':'1.2'}));g.append(svg('path',{d:'M0 -1 L0 -26',stroke:'#405369','stroke-width':'2','stroke-linecap':'round'}));g.append(svg('path',{d:'M1 -25 Q10 -28 18 -21 L1 -14 Z',fill:person.color,stroke:'#455465','stroke-width':'.6'}));const label=svg('text',{x:1,y:-32,class:'flag-label'});label.textContent=person.name.slice(0,4);g.append(label);
+ const places=visits.filter(v=>v.region===id&&v.ownerId===person.id).map(v=>v.place);const title=svg('title');title.textContent=person.name+'｜'+byId.get(id).name+'：'+places.join('、');g.append(title);g.addEventListener('click',e=>{e.stopPropagation();toast(title.textContent)});return g;
+}
+function renderMap(){if(!mapGeo)return;const root=$('mapLayers');root.replaceChildren();const shapes=svg('g'),labels=svg('g'),flags=svg('g');const grouped=new Map();for(const v of visits){if(!grouped.has(v.region))grouped.set(v.region,new Set());grouped.get(v.region).add(v.ownerId)}
+ for(const f of mapGeo.features){const id=String(f.properties.adcode),r=byId.get(id);if(!r)continue;const persons=members.filter(m=>grouped.get(id)?.has(m.id));const path=svg('path',{d:geometryPath(f.geometry),class:'land'+(persons.length?' visited':''),tabindex:'0',role:'button','aria-label':r.name+'，'+persons.length+' 人插旗'});
+ const t=svg('title');t.textContent=r.name+(persons.length?'（'+persons.map(m=>m.name).join('、')+'已插旗）':'（尚無成員插旗）');path.append(t);path.onclick=()=>{if(!currentMember())openProfiles(false);else addVisit(r.short,id)};path.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();path.click()}};shapes.append(path);
+ if(!['110000','120000','310000','810000','820000'].includes(id)){const [x,y]=xy(centerFor(f));const lab=svg('text',{x,y,class:'map-name'});lab.textContent=r.short;labels.append(lab)}persons.forEach((p,i)=>flags.append(buildFlag(f,p,i,persons.length)))}root.append(shapes,labels,flags);applyZoom()}
+function applyZoom(){const cx=550,cy=352.5;$('mapLayers').setAttribute('transform',`translate(${cx*(1-zoom)} ${cy*(1-zoom)}) scale(${zoom})`)}
+async function loadGeo(){const urls=['https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json','https://raw.githubusercontent.com/lqb-zh/geojson-chinadata/master/100000_full.json','https://geojson.cn/api/china/100000.json'];for(const url of urls){const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),10500);try{const res=await fetch(url,{signal:controller.signal,cache:'force-cache'});if(!res.ok)throw Error('HTTP '+res.status);const geo=await res.json();const features=(geo.features||[]).filter(f=>f.geometry&&byId.has(String(f.properties?.adcode)));if(features.length<30)throw Error('缺少省級地理資料');mapGeo={type:'FeatureCollection',features};$('mapMessage').classList.add('hide');renderMap();return}catch(e){console.warn('地圖來源無法載入：',url,e.message)}finally{clearTimeout(timeout)}}$('mapMessage').innerHTML='<strong>地圖暫時載入失敗</strong><span>請確認網路連線再重新整理；攻城記錄仍能使用。</span>'}
+function downloadBackup(){const data={app:'travel-footprints-team',version:2,roomId,exportedAt:new Date().toISOString(),members,records:visits};const b=new Blob([JSON.stringify(data,null,2)],{type:'application/json;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='六人攻城記錄-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500);toast('六人資料已匯出備份')}
+async function importBackup(file){if(!file)return;try{if(!currentMember())throw Error('請先選擇自己的暱稱');if(file.size>2000000)throw Error('檔案過大');const data=JSON.parse(await file.text());const arr=Array.isArray(data)?data:Array.isArray(data.records)?data.records:[];if(!arr.length)throw Error('沒有可以匯入的地點');const clean=[];for(const v of arr.slice(0,1000)){const place=cleanPlace(v.place),region=String(v.region);if(place&&byId.has(region)&&!myVisits().some(x=>x.region===region&&normalize(x.place)===normalize(place))&&!clean.some(x=>x.region===region&&normalize(x.place)===normalize(place)))clean.push({ownerId:currentId,place,region,addedAt:Number(v.addedAt)||Date.now()})}
+ if(!clean.length)return toast('沒有找到尚未記錄的新地點');if(!confirm('將 '+clean.length+' 筆攻城記錄匯入目前的「'+currentMember().name+'」名下？'))return;
+ if(mode==='local'){const data=loadLocal();data.visits=data.visits||{};for(const it of clean)data.visits[makeId('v')]=it;saveLocal(data)}else if(mode==='cloud'){const {db,dbLib}=cloud;const patch={};for(const it of clean)patch['visits/'+makeId('v')]=it;await dbLib.update(dbLib.ref(db,'rooms/'+roomId),patch)}else throw Error('雲端尚未連線');toast('已匯入 '+clean.length+' 筆攻城記錄');
+ }catch(e){toast('匯入失敗：'+e.message)}finally{$('fileInput').value=''}}
+async function copyText(text){try{await navigator.clipboard.writeText(text);toast('已複製共用網址')}catch(e){$('inviteInput').focus();$('inviteInput').select();toast('請手動複製選取的網址')}}
+function openInvite(){if(mode!=='cloud')return toast('尚未啟用雲端同步，不能分享共用網址');const u=new URL(location.href);u.searchParams.set('room',roomId);u.hash='';$('inviteInput').value=u.href;$('inviteDialog').showModal()}
+function init(){const select=$('regionSelect'),suggest=$('placeSuggestions');for(const r of REGIONS){const option=document.createElement('option');option.value=r.id;option.textContent=r.name;select.append(option)}const words=unique(REGIONS.flatMap(r=>[r.short,...r.words])).sort((a,b)=>a.localeCompare(b,'zh-Hant'));for(const w of words){const o=document.createElement('option');o.value=w;suggest.append(o)}
+ $('addButton').onclick=submit;$('placeInput').onkeydown=e=>{if(e.key==='Enter')submit()};$('placeInput').oninput=()=>$('manual').classList.add('hide');$('manualAdd').onclick=()=>addVisit($('placeInput').value,select.value);
+ document.querySelectorAll('[data-example]').forEach(btn=>btn.onclick=()=>{$('placeInput').value=btn.dataset.example;submit()});$('profileEditBtn').onclick=()=>openProfiles(true);$('saveProfile').onclick=saveMember;$('cancelProfile').onclick=()=>$('profileDialog').close();$('profileClose').onclick=()=>$('profileDialog').close();
+ $('zoomIn').onclick=()=>{zoom=Math.min(3,zoom+.25);applyZoom()};$('zoomOut').onclick=()=>{zoom=Math.max(.75,zoom-.25);applyZoom()};$('zoomReset').onclick=()=>{zoom=1;applyZoom()};
+ $('inviteTop').onclick=openInvite;$('shareBtn').onclick=openInvite;$('inviteClose').onclick=()=>$('inviteDialog').close();$('inviteCopy').onclick=()=>copyText($('inviteInput').value);$('exportBtn').onclick=downloadBackup;$('importBtn').onclick=()=>$('fileInput').click();$('fileInput').onchange=e=>importBackup(e.target.files[0]);$('clearBtn').onclick=clearMine;
+ initializeStore();loadGeo();
+}
+init();
+</script>
+</body></html>
